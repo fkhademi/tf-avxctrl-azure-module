@@ -1,8 +1,8 @@
 # Azure
-variable "azure_sub_id" {  }
-variable "azure_app_id" {  }
-variable "azure_app_key" {  }
-variable "azure_dir_id" {  }
+variable "azure_sub_id" {}
+variable "azure_app_id" {}
+variable "azure_app_key" {}
+variable "azure_dir_id" {}
 
 variable "location" { default = "Germany West Central" }
 variable "name" { default = "avx-shared" }

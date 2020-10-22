@@ -15,7 +15,7 @@ resource "azurerm_subnet" "internal" {
   name                 = "${var.name}-subnet"
   resource_group_name  = azurerm_resource_group.main.name
   virtual_network_name = azurerm_virtual_network.main.name
-  address_prefixes       = [var.vnet_subnet_cidr]
+  address_prefixes     = [var.vnet_subnet_cidr]
 }
 
 resource "azurerm_network_interface" "main" {
