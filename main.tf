@@ -45,6 +45,28 @@ resource "null_resource" "accept_license" {
   }
 }
 
+resource "azurerm_network_security_group" "ctrl-nsg" {
+  name                = "ctrl-nsg"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+
+  security_rule {
+    name                       = "HTTPS"
+    priority                   = 1004
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "TCP"
+    source_port_range          = "*"
+    destination_port_range     = "443"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+resource "azurerm_network_interface_security_group_association" "ctrl_nsg" {
+  network_interface_id      = azurerm_network_interface.main.id
+  network_security_group_id = azurerm_network_security_group.ctrl-nsg.id
+}
+
 resource "azurerm_network_security_group" "copilot-nsg" {
   name                = "copilot-nsg"
   location            = azurerm_resource_group.main.location
