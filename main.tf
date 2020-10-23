@@ -1,3 +1,4 @@
+### RG, VNET, Subnet ###
 resource "azurerm_resource_group" "main" {
   name     = "${var.name}-rg"
   location = var.location
@@ -17,7 +18,7 @@ resource "azurerm_subnet" "internal" {
   virtual_network_name = azurerm_virtual_network.main.name
   address_prefixes     = [var.vnet_subnet_cidr]
 }
-
+### Controller ###
 resource "azurerm_network_interface" "main" {
   name                = "avx-ctrl-nic"
   location            = azurerm_resource_group.main.location
@@ -39,10 +40,10 @@ resource "azurerm_public_ip" "main" {
   idle_timeout_in_minutes = 30
 }
 
-resource "null_resource" "accept_license" {
-  provisioner "local-exec" {
-    command = "python3 ./accept_license.py"
-  }
+resource "azurerm_marketplace_agreement" "controller" {
+  publisher = "aviatrix-systems"
+  offer     = "aviatrix-bundle-payg"
+  plan      = "aviatrix-enterprise-bundle-byol"
 }
 
 resource "azurerm_network_security_group" "ctrl-nsg" {
@@ -65,50 +66,6 @@ resource "azurerm_network_security_group" "ctrl-nsg" {
 resource "azurerm_network_interface_security_group_association" "ctrl_nsg" {
   network_interface_id      = azurerm_network_interface.main.id
   network_security_group_id = azurerm_network_security_group.ctrl-nsg.id
-}
-
-resource "azurerm_network_security_group" "copilot-nsg" {
-  name                = "copilot-nsg"
-  location            = azurerm_resource_group.main.location
-  resource_group_name = azurerm_resource_group.main.name
-
-  security_rule {
-    name                       = "NetFlow"
-    priority                   = 1002
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "UDP"
-    source_port_range          = "*"
-    destination_port_range     = "31283"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-  security_rule {
-    name                       = "Syslog"
-    priority                   = 1003
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "UDP"
-    source_port_range          = "*"
-    destination_port_range     = "5000"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-  security_rule {
-    name                       = "HTTPS"
-    priority                   = 1004
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "TCP"
-    source_port_range          = "*"
-    destination_port_range     = "443"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-}
-resource "azurerm_network_interface_security_group_association" "copilot_nsg" {
-  network_interface_id      = azurerm_network_interface.main.id
-  network_security_group_id = azurerm_network_security_group.copilot-nsg.id
 }
 
 resource "azurerm_virtual_machine" "avxctrl" {
@@ -150,9 +107,55 @@ resource "azurerm_virtual_machine" "avxctrl" {
     disable_password_authentication = false
   }
 }
+
 ##################
 #### CO-PILOT ####
 ##################
+
+resource "azurerm_network_security_group" "copilot-nsg" {
+  name                = "copilot-nsg"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+
+  security_rule {
+    name                       = "NetFlow"
+    priority                   = 1002
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "UDP"
+    source_port_range          = "*"
+    destination_port_range     = "31283"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+  security_rule {
+    name                       = "Syslog"
+    priority                   = 1003
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "UDP"
+    source_port_range          = "*"
+    destination_port_range     = "5000"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+  security_rule {
+    name                       = "HTTPS"
+    priority                   = 1004
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "TCP"
+    source_port_range          = "*"
+    destination_port_range     = "443"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+resource "azurerm_network_interface_security_group_association" "copilot_nsg" {
+  network_interface_id      = azurerm_network_interface.avx-copilot-nic.id
+  network_security_group_id = azurerm_network_security_group.copilot-nsg.id
+}
+
 resource "azurerm_network_interface" "avx-copilot-nic" {
   name                = "avx-copilot-nic"
   location            = azurerm_resource_group.main.location
