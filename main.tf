@@ -3,9 +3,9 @@ provider "azurerm" {
 }
 ### RG, VNET, Subnet ###
 resource "azurerm_resource_group" "main" {
-  name     = "${var.name}-rg"
-  location = var.location
-  depends_on = [ azurerm_marketplace_agreement.controller, azurerm_marketplace_agreement.copilot ]
+  name       = "${var.name}-rg"
+  location   = var.location
+  depends_on = [azurerm_marketplace_agreement.controller, azurerm_marketplace_agreement.copilot]
 }
 
 resource "azurerm_virtual_network" "main" {
@@ -119,6 +119,20 @@ resource "azurerm_virtual_machine" "avxctrl" {
   os_profile_linux_config {
     disable_password_authentication = false
   }
+}
+
+resource "azurerm_storage_account" "backup" {
+  name                     = "avxctrl-backup"
+  resource_group_name      = azurerm_resource_group.main.name
+  location                 = azurerm_resource_group.main.location
+  account_tier             = "Standard"
+  account_replication_type = "GRS"
+}
+
+resource "azurerm_storage_container" "backup" {
+  name                  = "vhds"
+  storage_account_name  = azurerm_storage_account.backup.name
+  container_access_type = "blob"
 }
 
 ##################
