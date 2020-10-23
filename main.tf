@@ -108,6 +108,7 @@ resource "azurerm_virtual_machine" "avxctrl" {
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Premium_LRS"
+    disk_size_gb      = "1025"
   }
 
   os_profile {
