@@ -9,6 +9,18 @@ This will deploy a Resource Group, Shared Services VNET, Subnet, Controller and 
 
 <img src="https://raw.githubusercontent.com/fkhademi/tf-avxctrl-azure-module/main/img.png">
 
+### Usage Example
+```
+module "avx_shared" {
+  source = "git::https://github.com/fkhademi/tf-avxctrl-azure-module.git"
+  agreement     = false
+  azure_sub_id  = var.azure_sub_id
+  azure_app_id  = var.azure_app_id
+  azure_app_key = var.azure_app_key
+  azure_dir_id  = var.azure_dir_id
+}
+```
+
 ### Variables
 The following variables are required:
 
