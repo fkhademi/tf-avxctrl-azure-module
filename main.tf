@@ -2,6 +2,7 @@
 resource "azurerm_resource_group" "main" {
   name     = "${var.name}-rg"
   location = var.location
+  depends_on = [ azurerm_marketplace_agreement.controller, azurerm_marketplace_agreement.copilot ]
 }
 
 resource "azurerm_virtual_network" "main" {
@@ -18,6 +19,19 @@ resource "azurerm_subnet" "internal" {
   virtual_network_name = azurerm_virtual_network.main.name
   address_prefixes     = [var.vnet_subnet_cidr]
 }
+
+resource "azurerm_marketplace_agreement" "controller" {
+  publisher = "aviatrix-systems"
+  offer     = "aviatrix-bundle-payg"
+  plan      = "aviatrix-enterprise-bundle-byol"
+}
+
+resource "azurerm_marketplace_agreement" "copilot" {
+  publisher = "aviatrix-systems"
+  offer     = "aviatrix-copilot"
+  plan      = "avx-cplt-byol-01"
+}
+
 ### Controller ###
 resource "azurerm_network_interface" "main" {
   name                = "avx-ctrl-nic"
@@ -38,12 +52,6 @@ resource "azurerm_public_ip" "main" {
   resource_group_name     = azurerm_resource_group.main.name
   allocation_method       = "Static"
   idle_timeout_in_minutes = 30
-}
-
-resource "azurerm_marketplace_agreement" "controller" {
-  publisher = "aviatrix-systems"
-  offer     = "aviatrix-bundle-payg"
-  plan      = "aviatrix-enterprise-bundle-byol"
 }
 
 resource "azurerm_network_security_group" "ctrl-nsg" {
