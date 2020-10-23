@@ -86,7 +86,7 @@ resource "azurerm_virtual_machine" "avxctrl" {
   location              = azurerm_resource_group.main.location
   resource_group_name   = azurerm_resource_group.main.name
   network_interface_ids = ["${azurerm_network_interface.main.id}"]
-  vm_size               = "Standard_A4_v2"
+  vm_size               = "Standard_D8s_v3"
 
   delete_data_disks_on_termination = true
 
@@ -107,7 +107,7 @@ resource "azurerm_virtual_machine" "avxctrl" {
     name              = "avxdisk1"
     caching           = "ReadWrite"
     create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
+    managed_disk_type = "Premium_LRS"
   }
 
   os_profile {
