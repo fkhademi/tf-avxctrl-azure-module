@@ -111,6 +111,10 @@ resource "azurerm_virtual_machine" "avxctrl" {
     disk_size_gb      = "1025"
   }
 
+  boot_diagnostics {
+    enabled = true
+  }
+
   os_profile {
     computer_name  = "avx-controller"
     admin_username = "avx2020"
