@@ -7,7 +7,7 @@ This will deploy a Resource Group, Shared Services VNET, Subnet, Controller and 
 
 ### Diagram
 
-<img src="https://github.com/fkhademi/tf-avxctrl-azure-module/raw/master/img.png">
+<img src="https://raw.githubusercontent.com/fkhademi/tf-avxctrl-azure-module/main/img.png">
 
 ### Variables
 The following variables are required:
