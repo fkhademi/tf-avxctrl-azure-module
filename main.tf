@@ -21,12 +21,14 @@ resource "azurerm_subnet" "internal" {
 }
 
 resource "azurerm_marketplace_agreement" "controller" {
+  count     = var.agreement ? 1 : 0
   publisher = "aviatrix-systems"
   offer     = "aviatrix-bundle-payg"
   plan      = "aviatrix-enterprise-bundle-byol"
 }
 
 resource "azurerm_marketplace_agreement" "copilot" {
+  count     = var.agreement ? 1 : 0
   publisher = "aviatrix-systems"
   offer     = "aviatrix-copilot"
   plan      = "avx-cplt-byol-01"
