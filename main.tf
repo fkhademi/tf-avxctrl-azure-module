@@ -1,3 +1,6 @@
+provider "azurerm" {
+  features {}
+}
 ### RG, VNET, Subnet ###
 resource "azurerm_resource_group" "main" {
   name     = "${var.name}-rg"
