@@ -122,7 +122,7 @@ resource "azurerm_virtual_machine" "avxctrl" {
 }
 
 resource "azurerm_storage_account" "backup" {
-  name                     = "avxctrl-backup"
+  name                     = "avxctrlbackup"
   resource_group_name      = azurerm_resource_group.main.name
   location                 = azurerm_resource_group.main.location
   account_tier             = "Standard"
